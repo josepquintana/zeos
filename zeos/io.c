@@ -58,7 +58,6 @@ void printc_color(char c)
     Word ch = (Word) (c & 0x00FF) | 0x0300;
 	Word *screen = (Word *)0xb8000;
 	screen[(y * NUM_COLUMNS + x)] = ch;
-	//screen[(y * NUM_COLUMNS + x)] = ch;
     if (++x >= NUM_COLUMNS)
     {
       x = 0;
@@ -84,5 +83,5 @@ void printk(char *string)
 {
   int i;
   for (i = 0; string[i]; i++)
-    printc_color(string[i]);
+    printc(string[i]);
 }

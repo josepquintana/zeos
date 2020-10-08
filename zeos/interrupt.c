@@ -83,7 +83,20 @@ void setIdt()
   set_handlers();
 
   /* ADD INITIALIZATION CODE FOR INTERRUPT VECTOR */
+  setInterruptHandler(33, keyboard_handler, 0);
 
   set_idt_reg(&idtR);
+}
+
+/******************************************************************************/
+
+void keyboard_routine() 
+{
+	unsigned char key = inb(0x60); // Read 'Keyboard Data Registry' port
+
+	if((key & 0x80) == 0) { // Key is pressed (Make)
+		unsigned char code = char_map[key & 0x7F];
+		printc_xy(1, 1, code)
+	}
 }
 
