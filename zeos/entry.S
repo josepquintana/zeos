@@ -85,17 +85,61 @@ ENTRY(keyboard_handler)
 
 ENTRY(system_call_handler)
 	SAVE_ALL
-	cmpl $0, %eax
-	jl err
-	cmpl $MAX_SYSCALL, %eax
-	jg err
-	call *sys_call_table(, %eax, 0x04)
-	jmp fin
+	cmpl	$0, %eax
+	jl 		err
+	cmpl 	$MAX_SYSCALL, %eax
+	jg 		err
+	call 	*sys_call_table(, %eax, 0x04)
+	jmp 	fin
 err:
-	movl $-38, %eax		/*ENOSYS*/
+	movl 	$-38, %eax	/*ENOSYS*/
 fin:
-	movl %eax, 0x18(%esp)
+	movl 	%eax, 0x18(%esp)
 	RESTORE_ALL
 	iret
+
+
+
+ENTRY(syscall_handler_sysenter)
+	push	$__USER_DS
+	push	%ebp				// User stack address
+	pushfl
+	push	$__USER_CS
+	push	4(%ebp)       		// User return address
+	
+	SAVE_ALL
+	
+	cmpl 	$0, %eax
+	jl 		sysenter_err
+	cmpl 	$MAX_SYSCALL, %eax
+	jg 		sysenter_err
+	 
+	call	*sys_call_table(, %eax, 0x04)
+	
+	jmp		sysenter_fin
+	
+sysenter_err:
+	movl 	$-38, %eax	/*ENOSYS*/
+	
+sysenter_fin:
+	movl 	%eax, 0x18(%esp)
+	RESTORE_ALL
+	movl 	(%esp), %edx		// Return address
+	movl 	12(%esp), %ecx		// User stack address
+	sti							// Enable interrupts again
+	sysexit
+
+
+
+ENTRY(writeMSR)
+	push	%ebp
+	mov    	%esp,%ebp
+	mov    	0x08(%ebp),%ecx
+	mov    	0x0c(%ebp),%eax
+	mov		$0,%edx
+	wrmsr						// Write the value in edx:eax to MSR specified by ecx.
+	mov		%ebp,%esp
+	pop		%ebp
+	ret
 
 

@@ -8,6 +8,32 @@
 
 int errno;
 
+void perror(void) 
+{
+	char *msg = "";
+	switch(errno) {
+		case 5:
+			msg = "I/O error";
+			break;
+		case 9:
+			msg = "Bad file descriptor";
+			break;
+		case 13:
+			msg = "Permission denied";
+			break;
+		case 14:
+			msg = "Bad address";
+			break;
+		case 22:
+			msg = "Invalid argument";
+			break;
+		case 38:
+			msg = "Function not implemented";
+			break;
+	}
+	// write(1, msg, strlen(msg));
+}
+
 void itoa(int a, char *b)
 {
   int i, i1;

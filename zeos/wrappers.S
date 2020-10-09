@@ -30,13 +30,30 @@ ENTRY(writeMSR)
 	push	%ebp
 	mov    	%esp,%ebp
 	push 	%ebx
+	push 	%esi
 	mov    	0x08(%ebp),%ebx
 	mov    	0x0c(%ebp),%ecx
 	mov    	0x10(%ebp),%edx
 	
 	mov 	$0x04,%eax
 	
+	push	%ecx
+	push	%edx
+	
+	leal	mylabel,%esi
+	push	%esi
+	
+	push 	%ebp
+	mov    	%esp,%ebp
+	
 	sysenter
+	
+retsysexit:
+	pop		%ebp
+	pop		%esi
+	
+	pop		%edx
+	pop		%ecx
 	
 	cmp 	$0,%eax
 	jge		return
@@ -45,6 +62,7 @@ ENTRY(writeMSR)
 	mov		$-1,%eax
 	
 return:
+	pop		%esi
 	pop		%ebx
 	mov		%ebp,%esp
 	pop    	%ebp

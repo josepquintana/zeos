@@ -75,6 +75,8 @@ void setTrapHandler(int vector, void (*handler)(), int maxAccessibleFromPL)
 
 void keyboard_handler();
 void system_call_handler();
+void syscall_handler_sysenter();
+void writeMSR(int numMSR, int value);
 
 void setIdt()
 {
@@ -87,6 +89,11 @@ void setIdt()
   /* ADD INITIALIZATION CODE FOR INTERRUPT VECTOR */
   setInterruptHandler(33, keyboard_handler, 0);
   setTrapHandler(0x80, system_call_handler, 3);
+  
+  /* ADD INITIALIZATION CODE FOR MSR - (sysenter) */
+  writeMSR(0x174, __KERNEL_CS);
+  writeMSR(0x175, INITIAL_ESP);
+  writeMSR(0x176, (int)syscall_handler_sysenter);
 
   set_idt_reg(&idtR);
 }
