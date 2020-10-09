@@ -73,6 +73,8 @@ void setTrapHandler(int vector, void (*handler)(), int maxAccessibleFromPL)
   idt[vector].highOffset      = highWord((DWord)handler);
 }
 
+void keyboard_handler();
+void system_call_handler();
 
 void setIdt()
 {
@@ -84,6 +86,7 @@ void setIdt()
 
   /* ADD INITIALIZATION CODE FOR INTERRUPT VECTOR */
   setInterruptHandler(33, keyboard_handler, 0);
+  setTrapHandler(0x80, system_call_handler, 3);
 
   set_idt_reg(&idtR);
 }
@@ -94,9 +97,9 @@ void keyboard_routine()
 {
 	unsigned char key = inb(0x60); // Read 'Keyboard Data Registry' port
 
-	if((key & 0x80) == 0) { // Key is pressed (Make)
+	if((key & 0x80) == 0) { // Key is pressed (Make -> 0)
 		unsigned char code = char_map[key & 0x7F];
-		printc_xy(1, 1, code)
+		printc_xy_color(72, 3, code);
 	}
 }
 
