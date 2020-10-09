@@ -97,5 +97,12 @@ void printk(char *string)
   int i;
   for (i = 0; string[i]; i++)
     printc(string[i]);
-    // printc_color(string[i]);
+}
+
+/* PRINTK COLOR */
+void printk_color(char *string)
+{
+  int i;
+  for (i = 0; string[i]; i++)
+    printc_color(string[i]);
 }

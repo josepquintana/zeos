@@ -1,6 +1,7 @@
 #include <asm.h>
+#include <segment.h>
 
-ENTRY(write)
+ENTRY(writeIDT)
 	push	%ebp
 	mov    	%esp,%ebp
 	push 	%ebx
@@ -13,12 +14,12 @@ ENTRY(write)
 	int 	$0x80
 	
 	cmp 	$0,%eax
-	jge		return
+	jge		return1
 	neg 	%eax
 	mov 	%eax,errno
 	mov		$-1,%eax
 	
-return:
+return1:
 	pop		%ebx
 	mov		%ebp,%esp
 	pop    	%ebp
@@ -26,7 +27,7 @@ return:
 
 
 
-ENTRY(writeMSR)
+ENTRY(write)
 	push	%ebp
 	mov    	%esp,%ebp
 	push 	%ebx
@@ -40,7 +41,7 @@ ENTRY(writeMSR)
 	push	%ecx
 	push	%edx
 	
-	leal	mylabel,%esi
+	leal	retsysexit,%esi
 	push	%esi
 	
 	push 	%ebp
@@ -56,12 +57,12 @@ retsysexit:
 	pop		%ecx
 	
 	cmp 	$0,%eax
-	jge		return
+	jge		return2
 	neg 	%eax
 	mov 	%eax,errno
 	mov		$-1,%eax
 	
-return:
+return2:
 	pop		%esi
 	pop		%ebx
 	mov		%ebp,%esp

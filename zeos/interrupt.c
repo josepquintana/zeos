@@ -74,6 +74,7 @@ void setTrapHandler(int vector, void (*handler)(), int maxAccessibleFromPL)
 }
 
 void keyboard_handler();
+void clock_handler();
 void system_call_handler();
 void syscall_handler_sysenter();
 void writeMSR(int numMSR, int value);
@@ -88,6 +89,7 @@ void setIdt()
 
   /* ADD INITIALIZATION CODE FOR INTERRUPT VECTOR */
   setInterruptHandler(33, keyboard_handler, 0);
+  setInterruptHandler(32, clock_handler, 0);
   setTrapHandler(0x80, system_call_handler, 3);
   
   /* ADD INITIALIZATION CODE FOR MSR - (sysenter) */
@@ -109,5 +111,11 @@ void keyboard_routine()
 		printc_xy_color(72, 3, code);
 	}
 }
+
+void clock_routine() 
+{
+	zeos_show_clock();
+}
+
 
 
