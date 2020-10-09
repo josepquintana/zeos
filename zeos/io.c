@@ -79,7 +79,7 @@ void printc_xy(Byte mx, Byte my, char c)
   y=cy;
 }
 
-/* PRINTC COLOR */
+/* PRINTC XY COLOR */
 void printc_xy_color(Byte mx, Byte my, char c)
 {
   Byte cx, cy;
