@@ -19,6 +19,9 @@ unsigned int *p_sys_size = (unsigned int *) KERNEL_START;
 unsigned int *p_usr_size = (unsigned int *) KERNEL_START+1;
 unsigned int *p_rdtr = (unsigned int *) KERNEL_START+2;
 
+/* ZeOS Ticks variable */
+int zeos_ticks;
+
 /************************/
 /** Auxiliar functions **/
 /************************/
@@ -96,6 +99,9 @@ int __attribute__((__section__(".text.main")))
 
   /* Move user code/data now (after the page table initialization) */
   copy_data((void *) KERNEL_START + *p_sys_size, usr_main, *p_usr_size);
+  
+  /* Initialize 'zeos_ticks' variable */
+  zeos_ticks = 0;
 
   printk_color("\nEntering user mode...\n\n");
 
