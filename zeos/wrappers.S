@@ -27,6 +27,7 @@ return1:
 
 
 
+
 ENTRY(write)
 	push	%ebp
 	mov    	%esp,%ebp
@@ -41,7 +42,7 @@ ENTRY(write)
 	push	%ecx
 	push	%edx
 	
-	leal	retsysexit,%esi
+	leal	retsysexit2,%esi
 	push	%esi
 	
 	push 	%ebp
@@ -49,7 +50,7 @@ ENTRY(write)
 	
 	sysenter
 	
-retsysexit:
+retsysexit2:
 	pop		%ebp
 	pop		%esi
 	
@@ -68,5 +69,47 @@ return2:
 	mov		%ebp,%esp
 	pop    	%ebp
 	ret
+
+
+
+
+ENTRY(gettime)
+	push	%ebp
+	mov    	%esp,%ebp
+	push 	%esi
+	
+	mov 	$0x0a,%eax
+	
+	push	%ecx
+	push	%edx
+	
+	leal	retsysexit3,%esi
+	push	%esi
+	
+	push 	%ebp
+	mov    	%esp,%ebp
+	
+	sysenter
+	
+retsysexit3:
+	pop		%ebp
+	pop		%esi
+	
+	pop		%edx
+	pop		%ecx
+	
+	cmp 	$0,%eax
+	jge		return3
+	neg 	%eax
+	mov 	%eax,errno
+	mov		$-1,%eax
+	
+return3:
+	pop		%esi
+	mov		%ebp,%esp
+	pop    	%ebp
+	ret
+
+
 
 

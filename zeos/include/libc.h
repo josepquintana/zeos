@@ -12,7 +12,11 @@ int writeIDT(int fd, char *buffer, int size);
 
 int write(int fd, char *buffer, int size);
 
+int gettime();
+
 void perror(void);
+
+int addASM(int par1, int par2);
 
 void itoa(int a, char *b);
 
