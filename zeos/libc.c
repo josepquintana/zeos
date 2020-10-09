@@ -10,28 +10,33 @@ int errno;
 
 void perror(void) 
 {
-	char *msg = "";
+	char *errmsg = "";
 	switch(errno) {
 		case 5:
-			msg = "I/O error";
+			errmsg = "I/O error";
 			break;
 		case 9:
-			msg = "Bad file descriptor";
+			errmsg = "Bad file descriptor";
 			break;
 		case 13:
-			msg = "Permission denied";
+			errmsg = "Permission denied";
 			break;
 		case 14:
-			msg = "Bad address";
+			errmsg = "Bad address";
 			break;
 		case 22:
-			msg = "Invalid argument";
+			errmsg = "Invalid argument";
 			break;
 		case 38:
-			msg = "Function not implemented";
+			errmsg = "Function not implemented";
 			break;
+		default:
+			errmsg = "Unkown error code";
 	}
-	// write(1, msg, strlen(msg));
+	
+	write(1, "\nPERROR: ", strlen("\nPERROR: "));
+	write(1, errmsg, strlen(errmsg));
+	write(1, "\n", strlen("\n"));
 }
 
 void itoa(int a, char *b)

@@ -23,7 +23,11 @@ int __attribute__ ((__section__(".text.main")))
 	//int resASM = addASM(0x4, 0x6);
 	
 	josep();
-	//write(1, "Writen from user block", strlen("Writen from user block"));
+	
+	char * msg;
+	
+	msg = "Writing from inside the user block\n";
+	if(write(1, msg, strlen(msg)) == -1) { perror(); }
     
 	while(1) { }
 }

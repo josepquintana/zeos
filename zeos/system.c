@@ -72,8 +72,8 @@ int __attribute__((__section__(".text.main")))
 
   /*** DO *NOT* ADD ANY CODE IN THIS ROUTINE BEFORE THIS POINT ***/
 
-  printk("\nThis is my ZeOS - Josep Quintana\n");
-  printk("\nKernel Loaded!    \n");
+  printk_color("\nThis is my ZeOS - Josep Quintana\n");
+  printk_color("\nKernel Loaded!\n");
 
   /* Initialize hardware data */
   setGdt(); /* Definicio de la taula de segments de memoria */
@@ -97,8 +97,7 @@ int __attribute__((__section__(".text.main")))
   /* Move user code/data now (after the page table initialization) */
   copy_data((void *) KERNEL_START + *p_sys_size, usr_main, *p_usr_size);
 
-
-  printk("\nEntering user mode...\n");
+  printk_color("\nEntering user mode...\n\n");
 
   enable_int();
   /*
