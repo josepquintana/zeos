@@ -45,6 +45,7 @@ void printc(char c)
   }
 }
 
+/* PRINTC COLOR */
 void printc_color(char c)
 {
      __asm__ __volatile__ ( "movb %0, %%al; outb $0xe9" ::"a"(c)); /* Magic BOCHS debug: writes 'c' to port 0xe9 */
@@ -55,7 +56,7 @@ void printc_color(char c)
   }
   else
   {
-    Word ch = (Word) (c & 0x00FF) | 0x0300;
+    Word ch = (Word) (c & 0x00FF) | 0x0C00;
 	Word *screen = (Word *)0xb8000;
 	screen[(y * NUM_COLUMNS + x)] = ch;
     if (++x >= NUM_COLUMNS)
@@ -65,7 +66,6 @@ void printc_color(char c)
     }
   }
 }
-
 
 void printc_xy(Byte mx, Byte my, char c)
 {
@@ -79,9 +79,23 @@ void printc_xy(Byte mx, Byte my, char c)
   y=cy;
 }
 
+/* PRINTC COLOR */
+void printc_xy_color(Byte mx, Byte my, char c)
+{
+  Byte cx, cy;
+  cx=x;
+  cy=y;
+  x=mx;
+  y=my;
+  printc_color(c);
+  x=cx;
+  y=cy;
+}
+
 void printk(char *string)
 {
   int i;
   for (i = 0; string[i]; i++)
     printc(string[i]);
+    // printc_color(string[i]);
 }
