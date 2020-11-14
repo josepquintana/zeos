@@ -9,10 +9,10 @@
 union task_union task[NR_TASKS]
   __attribute__((__section__(".data.task")));
 
-#if 1 // why initially there's a zero
+#if 1 // why initially there's a zero ?
 struct task_struct *list_head_to_task_struct(struct list_head *l)
 {
-  return list_entry( l, struct task_struct, list);
+  return list_entry(l, struct task_struct, list);
 }
 #endif
 

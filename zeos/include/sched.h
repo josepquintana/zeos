@@ -44,7 +44,7 @@ void init_freequeue(void);
 
 void init_readyqueue(void);
 
-struct task_struct * current();
+struct task_struct *current();
 
 void task_switch(union task_union *new);
 
@@ -54,9 +54,9 @@ struct task_struct *list_head_to_task_struct(struct list_head *l);
 
 int allocate_DIR(struct task_struct *t);
 
-page_table_entry * get_PT (struct task_struct *t) ;
+page_table_entry *get_PT (struct task_struct *t) ;
 
-page_table_entry * get_DIR (struct task_struct *t) ;
+page_table_entry *get_DIR (struct task_struct *t) ;
 
 /* Headers for the scheduling policy */
 void sched_next_rr();

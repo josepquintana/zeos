@@ -235,7 +235,7 @@ void free_user_pages( struct task_struct *task )
 }
 
 
-/* free_frame - Mark as FREE_FRAME the frame  'frame'.*/
+/* free_frame - Mark as FREE_FRAME the frame 'frame'.*/
 void free_frame( unsigned int frame )
 {
     if ((frame>NUM_PAG_KERNEL)&&(frame<TOTAL_PAGES))
@@ -243,7 +243,7 @@ void free_frame( unsigned int frame )
 }
 
 /* set_ss_pag - Associates logical page 'page' with physical page 'frame' */
-void set_ss_pag(page_table_entry *PT, unsigned page,unsigned frame)
+void set_ss_pag(page_table_entry *PT, unsigned page, unsigned frame)
 {
 	PT[page].entry=0;
 	PT[page].bits.pbase_addr=frame;
