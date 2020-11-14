@@ -15,14 +15,15 @@
 enum state_t { ST_RUN, ST_READY, ST_BLOCKED };
 
 struct task_struct {
-  int PID;			/* Process ID. This MUST be the first field of the struct. */
-  page_table_entry * dir_pages_baseAddr; 	/* directory base address */
-  struct list_head list;	/* Task struct enqueuing */
+  	int PID;								/* Process ID. This MUST be the first field of the struct. */
+  	page_table_entry * dir_pages_baseAddr; 	/* Directory base address */
+  	struct list_head list;					/* Task struct enqueuing */
+	unsigned int ebp_reg_pos;				/* Position of the stack with the initial value for the EBP register */
 };
 
 union task_union {
-  struct task_struct task;
-  unsigned long stack[KERNEL_STACK_SIZE];    /* pila de sistema, per procés */
+  	struct task_struct task;
+  	unsigned long stack[KERNEL_STACK_SIZE];    /* pila de sistema, per procés */
 };
 
 extern union task_union task[NR_TASKS]; /* Vector de tasques */
@@ -45,7 +46,9 @@ void init_readyqueue(void);
 
 struct task_struct * current();
 
-void task_switch(union task_union*t);
+void task_switch(union task_union *new);
+
+void inner_task_switch(union task_union *new);
 
 struct task_struct *list_head_to_task_struct(struct list_head *l);
 

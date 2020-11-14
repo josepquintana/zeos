@@ -8,8 +8,6 @@
 
 #include <stats.h>
 
-int writeIDT(int fd, char *buffer, int size);
-
 int write(int fd, char *buffer, int size);
 
 int gettime();
