@@ -42,6 +42,16 @@ int __attribute__ ((__section__(".text.main")))
 	if(write(1, msg, strlen(msg)) == -1) { perror(); }
 
 	/* =============================================================== */
+
+	msg = "Attempting to fork... \nChild PID: ";
+	if(write(1, msg, strlen(msg)) == -1) { perror(); }
+	int child_pid = fork();
+	itoa(child_pid, msg);
+	if(write(1, msg, strlen(msg)) == -1) { perror(); }
+	msg = "\n";
+	if(write(1, msg, strlen(msg)) == -1) { perror(); }
+
+	/* =============================================================== */
 	
 	while(1) { }
 	

@@ -22,7 +22,7 @@
 extern int zeos_ticks;
 
 /* Last PID allocated ("/proc/sys/kernel/ns_last_pid" in Linux). This variables serves as a global PID counter */
-int last_pid = 10;
+int last_pid = 9;
 
 /* Return from fork ¿? */
 int ret_from_fork()
@@ -152,14 +152,14 @@ int sys_fork()
 			}
 
 			// Add selected PCB to the Free queue again since it is not usable
-			list_add_tail(&(pcb_child.list), &freequeue);	
+			list_add_tail(&(pcb_child->list), &freequeue);	
 
 			return -12; /*ENOMEM*/
 		}
 		else 
 		{
 			// Associate logical page with the new physical page (frame)
-			set_ss_page(page_table_child, PAG_LOG_INIT_DATA + page, new_frame);
+			set_ss_pag(page_table_child, PAG_LOG_INIT_DATA + page, new_frame);
 		}
   	}
 
@@ -168,13 +168,13 @@ int sys_fork()
 	for(int page = 0; page < NUM_PAG_KERNEL; page++) 
 	{
 		parent_frame = get_frame(get_PT(current()), page);
-		set_ss_page(page_table_child, page, parent_frame);
+		set_ss_pag(page_table_child, page, parent_frame);
 	}
 
 	for(int page = 0; page < NUM_PAG_CODE; page++) 
 	{
 		parent_frame = get_frame(get_PT(current()), PAG_LOG_INIT_CODE + page);
-		set_ss_page(page_table_child, PAG_LOG_INIT_CODE + page, parent_frame);
+		set_ss_pag(page_table_child, PAG_LOG_INIT_CODE + page, parent_frame);
 	} 
 
 	/* ===========*/
@@ -186,8 +186,8 @@ int sys_fork()
 	for(int page = (NUM_PAG_KERNEL + NUM_PAG_CODE); page < (NUM_PAG_KERNEL + NUM_PAG_CODE + NUM_PAG_DATA); page++)
 	{
 		unsigned int tmp_page = page + NUM_PAG_DATA; // Last page ¿? of the Page Table for temporally mapping
-		set_ss_page(page_table_parent, tmp_page, get_frame(page_table_child, page));
-		copy_data((void*) page << 12, (void*) tmp_page << 12, PAGE_SIZE);
+		set_ss_pag(page_table_parent, tmp_page, get_frame(page_table_child, page));
+		copy_data((void*) (page << 12), (void*) (tmp_page << 12), PAGE_SIZE);
 		del_ss_pag(page_table_parent, tmp_page);
 	}
 
@@ -214,13 +214,13 @@ int sys_fork()
 	// Prepare the stack with the content expected by "task_switch" to be able to restore it in the future when switching contexts. 
 	// This is done by emulating the result of a call to "task_switch" 
 	DWord aux_parent_ebp_reg = *(DWord*) parent_ebp_reg; // ¿?
-	pcb_child.ebp_reg_pos -= sizeof(DWord);  // ¿?
-	*(DWord*) pcb_child.ebp_reg_pos = (DWord) &ret_from_fork;
-	pcb_child.ebp_reg_pos -= sizeof(DWord);
-	*(DWord*) pcb_child.ebp_reg_pos = aux_parent_ebp_reg;
+	pcb_child->ebp_reg_pos -= sizeof(DWord);  // ¿?
+	*(DWord*) pcb_child->ebp_reg_pos = (DWord) &ret_from_fork;
+	pcb_child->ebp_reg_pos -= sizeof(DWord);
+	*(DWord*) pcb_child->ebp_reg_pos = aux_parent_ebp_reg;
 
 	// Insert new child process into the Ready queue since now it is ready to be assigned to the CPU when available
-	list_add_tail(&(pcb_child.list), &readyqueue);	
+	list_add_tail(&(pcb_child->list), &readyqueue);	
 	/* pcb_child->state = ST_READY; */
 
   	// Return the PID of the newly created child process
