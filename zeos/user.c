@@ -43,6 +43,8 @@ int __attribute__ ((__section__(".text.main")))
 
 	/* =============================================================== */
 
+	/*
+
 	msg = "Attempting to fork... \n";
 	if(write(1, msg, strlen(msg)) == -1) { perror(); }
 	int child_pid = fork();
@@ -55,7 +57,12 @@ int __attribute__ ((__section__(".text.main")))
 		if(write(1, msg, strlen(msg)) == -1) { perror(); }
 	}
 
+	*/
+
 	/* =============================================================== */
+
+
+	/*
 
 	child_pid = fork();
 	itoa(child_pid, msg);
@@ -79,6 +86,27 @@ int __attribute__ ((__section__(".text.main")))
 
 	msg = "                                                                                                                                                                ================================================================================================================================================================                                                                                                                                                                ";
 	if(write(1, msg, strlen(msg)) == -1) { perror(); }
+
+	*/
+
+	int child_pid = fork();
+	if(child_pid == 0) {
+		write(1, "son\n", 4);
+		itoa(getpid(), msg);
+		if(write(1, msg, strlen(msg)) == -1) { perror(); }
+		print_new_line();
+		exit();
+		itoa(getpid(), msg);
+		if(write(1, msg, strlen(msg)) == -1) { perror(); }
+		print_new_line();
+	}
+	if(child_pid != 0) {
+		write(1, "dad\n", 4);
+		itoa(getpid(), msg);
+		if(write(1, msg, strlen(msg)) == -1) { perror(); }
+		print_new_line();
+	}
+
 
 	while(1)
 	{

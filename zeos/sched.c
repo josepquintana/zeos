@@ -78,9 +78,11 @@ void init_idle (void)
 	// Assign PID 0 to this process
 	pcb->PID = 0;
 
+	// Assign total quantum to this process
+	set_quantum(pcb, DEFAULT_QUANTUM);
+
 	// Initialize new directory base address 
 	allocate_DIR(pcb);
-
 
 	// Initialize an execution context for the process to restore it when it gets assigned the CPU
 	union task_union *tu0 = (union task_union*) pcb;
@@ -107,6 +109,9 @@ void init_task1(void)
 	// Assign PID 1 to this process
 	pcb->PID = 1;
 
+	// Assign total quantum to this process
+	set_quantum(pcb, DEFAULT_QUANTUM);
+
 	// Initialize new directory base address for this process
 	allocate_DIR(pcb);
 
@@ -120,6 +125,9 @@ void init_task1(void)
 
 	// Set process page directory as the current directory in the system (will flush TLB)
 	set_cr3(pcb->dir_pages_baseAddr);
+
+	// Set RUN state
+	pcb->state = ST_RUN;
 
 }
 
@@ -220,19 +228,23 @@ void schedule()
 	}
 }
 
+
 /*
  * Update the number of ticks (quantum) that the process has executed since it got assigned the cpu.
  */
 void update_sched_data_rr(void) 
 {
-	remaining_allowed_quantum -= 1;
+	if(remaining_allowed_quantum > 0) 
+	{
+		remaining_allowed_quantum -= 1;
+	}
 }
 
 /*
  * Decide if it is necessary to change the current process
  * Returns -> 1 if it is necessary to change the current process and 0 otherwise
  */
-int needs_sched_rr (void)
+int needs_sched_rr(void)
 {
 	// Check if the allowed quantum for the current process has expired
 	if(remaining_allowed_quantum == 0) 

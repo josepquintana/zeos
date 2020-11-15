@@ -220,8 +220,8 @@ int sys_fork()
 	// Insert new child process into the Ready queue and update its state since now it is ready to be assigned to the CPU when available
 	list_add_tail(&(pcb_child->list), &readyqueue);	
 	pcb_child->state = ST_READY;
-	
-	/* QUANTUM !!! */
+
+	/* It is not necessary to set total quantum allowed for the child process since it inherits it from the parent process */
 
   	// Return the PID of the newly created child process
   	return pcb_child->PID;
