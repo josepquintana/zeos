@@ -317,6 +317,7 @@ void update_process_state_rr(struct task_struct *t, struct list_head *dst_queue)
 
 /*
  * Select the next process to execute, extract it from the Ready queue and to invoke the context switch process
+ *
  */
 void sched_next_rr(void)
 {

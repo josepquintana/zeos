@@ -21,7 +21,7 @@
 /* ZeOS Ticks variable */
 extern int zeos_ticks;
 
-/* Last PID allocated ("/proc/sys/kernel/ns_last_pid" in Linux). This variables serves as a global PID counter */
+/* Last PID allocated ("/proc/sys/kernel/ns_last_pid" in Linux). This variable serves as a global PID counter */
 int last_pid = 99;
 
 /* Return from fork for the child process */
@@ -106,7 +106,6 @@ int sys_getpid()
 *
 * return -> Negative number in case of error (specifying the kind of error), 0 if child or PID of the created process if parent.
 *
-* TODO: Never returning 0 to child....
 */
 int sys_fork()
 {
