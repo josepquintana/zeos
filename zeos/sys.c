@@ -32,18 +32,29 @@ int ret_from_fork()
 
 int check_fd(int fd, int permissions)
 {
-  if (fd!=1) return -9; /*EBADF*/
-  if (permissions!=ESCRIPTURA) return -13; /*EACCES*/
-  return 0;
+  	if (fd!=1) return -9; /*EBADF*/
+  	if (permissions!=ESCRIPTURA) return -13; /*EACCES*/
+  	return 0;
 }
+
+/* Update statistical information of this process when entering the system from user space */
+void update_statistics_user_to_sysem(void)
+{
+	update_p_stats(&(current()->p_stats.user_ticks), &(current()->p_stats.elapsed_total_ticks));
+}
+
+/* Update statistical information of this process when leaving the system to user space */
+void update_statistics_sysem_to_user(void)
+{
+	update_p_stats(&(current()->p_stats.system_ticks), &(current()->p_stats.elapsed_total_ticks));
+}
+
+/************************************************************/
 
 int sys_ni_syscall()
 {
 	return -38; /*ENOSYS*/
 }
-
-
-/************************************************************/
 
 /*
 * SYS_WRITE
@@ -255,3 +266,4 @@ void sys_exit()
  	// Schedule the execution of the next READY process and make a context switch
  	sched_next_rr();
 }
+

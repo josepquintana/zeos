@@ -85,6 +85,26 @@ int access_ok(int type, const void * addr, unsigned long size)
   return 0;
 }
 
+/*
+ * Update statistical information about a process
+ *
+ * *state_ticks:          pointer to the "p_stats.{user_ticks, system_ticks, ready_ticks}" field of a process PCB, depending 
+ *                        on the current state transition (ZeOS.pdf page 60)
+ *
+ * *elapsed_total_ticks:  pointer to the "p_stats.elapsed_total_ticks" field of a process PCB
+ */
+void update_p_stats(unsigned long *state_ticks, unsigned long *elapsed_total_ticks)
+{
+  // Get the elapsed ticks since the machine was powered on
+  unsigned long ticks = get_ticks();
+
+  // Update current state ticks (user_ticks OR system_ticks OR ready_ticks)
+  *state_ticks += ticks - *elapsed_total_ticks;
+
+  // Update total elapsed ticks value
+  *elapsed_total_ticks = ticks;
+
+}
 
 #define CYCLESPERTICK 109000
 

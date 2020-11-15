@@ -97,6 +97,9 @@ void init_idle (void)
 	// Initialize global idle_task variable
 	idle_task = pcb;
 
+	// Set READY state (is it necessary ¿?)
+	pcb->state = ST_READY;
+
 }
 
 void init_task1(void)
@@ -288,7 +291,10 @@ void update_process_state_rr(struct task_struct *t, struct list_head *dst_queue)
 		case ST_RUN:
 			/* No need to delete the task from any list */
 			list_add_tail(&(t->list), dst_queue); // Add task to the specified destination queue
-			if(dst_queue == &readyqueue) { t->state = ST_READY; }  // Update state to READY since the destination queue is the "readyqueue"
+			if(dst_queue == &readyqueue) { 
+				update_p_stats(&(t->p_stats.system_ticks), &(t->p_stats.elapsed_total_ticks)); // Update statistical information for this process
+				t->state = ST_READY; // Update state to READY since the destination queue is the "readyqueue"
+			}  
 			else { t->state = ST_BLOCKED; }
 			break;
 			
@@ -297,6 +303,7 @@ void update_process_state_rr(struct task_struct *t, struct list_head *dst_queue)
 			if(dst_queue == NULL) { t->state = ST_RUN; } // Update state to RUN when the destination queue is empty
 			else {
 				list_add_tail(&(t->list), dst_queue); // Add task to the specified destination queue
+				update_p_stats(&(t->p_stats.system_ticks), &(t->p_stats.elapsed_total_ticks)); // Update statistical information for this process
 				t->state = ST_READY; // Update state to READY since the destination queue is the "readyqueue"
 			}
 			break;
@@ -344,6 +351,11 @@ void sched_next_rr(void)
 	
 	// Set the remaining allowed quantum variable to the value of the selected next process total quantum
 	remaining_allowed_quantum = get_quantum(pcb_next);
+
+	// Update statistical information of this process and the NEXT scheduled process
+	update_p_stats(&(current()->p_stats.system_ticks), &(current()->p_stats.elapsed_total_ticks));
+	update_p_stats(&(pcb_next->p_stats.ready_ticks), &(pcb_next->p_stats.elapsed_total_ticks));
+	pcb_next->p_stats.total_trans += 1; // Register a new READY->RUN transition
 
 	// Invoke the context switch method to start executing the selected next process
 	task_switch((union task_union*) pcb_next);
