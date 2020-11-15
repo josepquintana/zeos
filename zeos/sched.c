@@ -5,6 +5,7 @@
 #include <sched.h>
 #include <mm.h>
 #include <io.h>
+#include <utils.h>
 
 union task_union task[NR_TASKS]
   __attribute__((__section__(".data.task")));
@@ -81,6 +82,9 @@ void init_idle (void)
 	// Assign total quantum to this process
 	set_quantum(pcb, DEFAULT_QUANTUM);
 
+	// Initialize statistical information
+	init_stats(&(pcb->p_stats));
+
 	// Initialize new directory base address 
 	allocate_DIR(pcb);
 
@@ -111,6 +115,9 @@ void init_task1(void)
 
 	// Assign total quantum to this process
 	set_quantum(pcb, DEFAULT_QUANTUM);
+
+	// Initialize statistical information
+	init_stats(&(pcb->p_stats));
 
 	// Initialize new directory base address for this process
 	allocate_DIR(pcb);
@@ -155,6 +162,17 @@ void init_sched()
 {
 	init_freequeue();
 	init_readyqueue();
+}
+
+void init_stats(struct stats *s)
+{
+	s->user_ticks = 0;
+	s->system_ticks = 0;
+	s->blocked_ticks = 0;
+	s->ready_ticks = 0;
+	s->elapsed_total_ticks = get_ticks();
+	s->total_trans = 0;
+	s->remaining_ticks = get_ticks();
 }
  
 /* ======= */ 
@@ -205,13 +223,13 @@ void inner_task_switch(union task_union *new)
  */ 
 struct task_struct* current()
 {
-  int ret_value;
-  
-  __asm__ __volatile__(
-  	"movl %%esp, %0"
-	: "=g" (ret_value)
-  );
-  return (struct task_struct*)(ret_value&0xfffff000);
+	int ret_value;
+
+	__asm__ __volatile__(
+		"movl %%esp, %0"
+		: "=g" (ret_value)
+	);
+	return (struct task_struct*)(ret_value&0xfffff000);
 }
 
 /*

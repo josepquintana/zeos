@@ -8,6 +8,7 @@
 #include <list.h>
 #include <types.h>
 #include <mm_address.h>
+#include <stats.h> 
 
 #define NR_TASKS      10
 #define KERNEL_STACK_SIZE	1024
@@ -21,6 +22,7 @@ struct task_struct {
 	unsigned int ebp_reg_pos;				/* Position of the stack with the initial value for the EBP register */
 	enum state_t state;						/* State of the process */
 	int quantum;							/* Quantum: Time allowed to run in the CPU */
+	struct stats p_stats;					/* Statistical information of the process */
 };
 
 union task_union {
@@ -72,6 +74,9 @@ void schedule(void);
 
 int get_quantum(struct task_struct *t);
 void set_quantum(struct task_struct *t, int new_quantum);
+
+/* Statistical information */
+void init_stats(struct stats *s);
 
 /* Function to write to the MSR registers */
 void writeMSR(int numMSR, int value);

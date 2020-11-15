@@ -223,6 +223,9 @@ int sys_fork()
 
 	/* It is not necessary to set total quantum allowed for the child process since it inherits it from the parent process */
 
+	// Initialize statistical information
+	init_stats(&(pcb_child->p_stats));
+
   	// Return the PID of the newly created child process
   	return pcb_child->PID;
 }
