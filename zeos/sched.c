@@ -27,6 +27,12 @@ struct list_head readyqueue;
 /* Idle Process PCB */
 struct task_struct *idle_task;
 
+/* Define default quantum value */
+#define DEFAULT_QUANTUM 10
+
+// Variable to store the remaining allowed quantum for the running process
+int remaining_allowed_quantum;
+
 /* get_DIR - Returns the Page Directory address for task 't' */
 page_table_entry * get_DIR (struct task_struct *t) 
 {
@@ -200,3 +206,123 @@ struct task_struct* current()
   return (struct task_struct*)(ret_value&0xfffff000);
 }
 
+/*
+ * SCHEDULING
+ * Make scheduling decisions when necessary
+ */
+void schedule()
+{
+	update_sched_data_rr();
+	if(needs_sched_rr())
+	{
+		update_process_state_rr(current(), &readyqueue);
+		sched_next_rr();
+	}
+}
+
+/*
+ * Update the number of ticks (quantum) that the process has executed since it got assigned the cpu.
+ */
+void update_sched_data_rr(void) 
+{
+	remaining_allowed_quantum -= 1;
+}
+
+/*
+ * Decide if it is necessary to change the current process
+ * Returns -> 1 if it is necessary to change the current process and 0 otherwise
+ */
+int needs_sched_rr (void)
+{
+	// Check if the allowed quantum for the current process has expired
+	if((remaining_allowed_quantum == 0) 
+	{
+		if(! list_empty(&readyqueue)) { return 1; }						// It is necessary to change the current process
+		else { remaining_allowed_quantum = get_quantum(current); }		// Since the are no READY processes there's no need to change the current process
+	}
+	return 0; 	// No need to change the current process
+}
+
+/* 
+ * Update the current state of a process by deleting it from its current queue (state) and inserting it into a new queue
+ *
+ * task_struct *t: PCB of the process to update 
+ * list_head *dest_queue: queue according to the new state of the process. 
+ *
+ * TODO: Update the readyqueue, if current process is not the idle process, by inserting the current process at the end of the readyqueue.
+ */
+void update_process_state_rr(struct task_struct *t, struct list_head *dst_queue) 
+{
+	switch(t->state) 
+	{
+		case ST_RUN:
+			/* No need to delete the task from any list */
+			list_add_tail(&(t->list), dst_queue); // Add task to the specified destination queue
+			if(dst_queue == &readyqueue) { t->state = ST_READY; }  // Update state to READY since the destination queue is the "readyqueue"
+			else { t->state = ST_BLOCKED; }
+			break;
+			
+		case ST_BLOCKED:
+			list_del(&(t->list)); // Delete task from its current list
+			if(dst_queue == NULL) { t->state = ST_RUN; } // Update state to RUN when the destination queue is empty
+			else {
+				list_add_tail(&(t->list), dst_queue); // Add task to the specified destination queue
+				t->state = ST_READY; // Update state to READY since the destination queue is the "readyqueue"
+			}
+			break;
+			
+		case ST_READY:
+			list_del(&(t->list)); // Delete task from its current list, i.e. the "readyqueue"
+			if(dst_queue == NULL) { t->state = ST_RUN; } // Update state to RUN when the destination queue is empty
+			else {
+				list_add_tail(&(t->list), dst_queue); // Add task to the specified destination queue
+				t->state = ST_BLOCKED; // Update state to BLOCKED
+			}
+			break;
+			
+		default:
+	}
+}
+
+/*
+ * Select the next process to execute, extract it from the Ready queue and to invoke the context switch process
+ */
+void sched_next_rr(void)
+{
+	struct task_struct *pcb_next;
+	
+	// Check if there are any processes READY to get the CPU assigned
+	if(! list_empty(&readyqueue))
+	{
+		// Get the first READY task from the readyqueue list. Then remove it from the list
+		struct list_head *ft = list_first(&readyqueue);
+		list_del(ft);
+
+		// Get a pointer to the memory of the retrieved READY task which will be the next process to get the CPU assigned
+		pcb_next = list_head_to_task_struct(ft);
+	}
+	else
+	{
+		// Select the Idle Task as the next process to execute when there are no other processes READY
+		pcb_next = idle_task;
+	}
+
+	// Change selected next process state to RUN
+	pcb_next->state=ST_RUN;
+	
+	// Set the remaining allowed quantum variable to the value of the selected next process total quantum
+	remaining_allowed_quantum = get_quantum(pcb_next);
+
+	// Invoke the context switch method to start executing the selected next process
+	task_switch((union task_union*) pcb_next);
+}
+
+int get_quantum(struct task_struct *t)
+{
+  return t->quantum;
+}
+
+void set_quantum(struct task_struct *t, int new_quantum)
+{
+  t->quantum = new_quantum;
+}

@@ -19,6 +19,8 @@ struct task_struct {
   	page_table_entry * dir_pages_baseAddr; 	/* Directory base address */
   	struct list_head list;					/* Task struct enqueuing */
 	unsigned int ebp_reg_pos;				/* Position of the stack with the initial value for the EBP register */
+	enum state_t state;						/* State of the process */
+	int quantum;							/* Quantum: Time allowed to run in the CPU */
 };
 
 union task_union {
@@ -62,9 +64,13 @@ page_table_entry *get_PT (struct task_struct *t) ;
 page_table_entry *get_DIR (struct task_struct *t) ;
 
 /* Headers for the scheduling policy */
-void sched_next_rr();
-void update_process_state_rr(struct task_struct *t, struct list_head *dest);
-int needs_sched_rr();
 void update_sched_data_rr();
+int needs_sched_rr();
+void update_process_state_rr(struct task_struct *t, struct list_head *dest);
+void sched_next_rr();
+void schedule(void);
+
+int get_quantum(struct task_struct *t);
+void set_quantum(struct task_struct *t, int new_quantum);
 
 #endif  /* __SCHED_H__ */
