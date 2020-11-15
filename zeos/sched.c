@@ -135,6 +135,9 @@ void init_task1(void)
 
 	// Set process page directory as the current directory in the system (will flush TLB)
 	set_cr3(pcb->dir_pages_baseAddr);
+	
+	// Set the value of the remaining allowed quantum [NEW]
+	remaining_allowed_quantum = DEFAULT_QUANTUM;
 
 	// Set RUN state
 	pcb->state = ST_RUN;
