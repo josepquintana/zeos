@@ -22,9 +22,9 @@
 extern int zeos_ticks;
 
 /* Last PID allocated ("/proc/sys/kernel/ns_last_pid" in Linux). This variables serves as a global PID counter */
-int last_pid = 9;
+int last_pid = 99;
 
-/* Return from fork ¿? */
+/* Return from fork for the child process */
 int ret_from_fork()
 {
 	return 0;
@@ -42,9 +42,6 @@ int sys_ni_syscall()
 	return -38; /*ENOSYS*/
 }
 
-void sys_exit()
-{  
-}
 
 /************************************************************/
 
@@ -109,6 +106,7 @@ int sys_getpid()
 *
 * return -> Negative number in case of error (specifying the kind of error), 0 if child or PID of the created process if parent.
 *
+* TODO: Never returning 0 to child....
 */
 int sys_fork()
 {
@@ -227,4 +225,31 @@ int sys_fork()
 
   	// Return the PID of the newly created child process
   	return pcb_child->PID;
+}
+
+
+/*
+ * SYS_EXIT
+ */
+void sys_exit()
+{  
+	// Get the Page Table address for the process to destroy. 
+ 	page_table_entry *page_table_destroy = get_PT(current()); 
+
+ 	// Deallocate all the used physical pages and remove mappings of logical pages of the process to destroy
+ 	for(int page = 0; page < NUM_PAG_DATA; page++)
+ 	{
+ 		free_frame(get_frame(page_table_destroy, PAG_LOG_INIT_DATA + page));
+ 		del_ss_pag(page_table_destroy, PAG_LOG_INIT_DATA + page);
+ 	}
+
+ 	// Add the process to destroy to the Free queue since its PCB will become unused
+ 	list_add_tail(&(current()->list), &freequeue);
+
+ 	// Invalidate PID and the directory base address of the destroyed process
+ 	current()->PID = -1;
+ 	current()->dir_pages_baseAddr = NULL;
+
+ 	// Schedule the execution of the next READY process and make a context switch
+ 	sched_next_rr();
 }

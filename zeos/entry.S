@@ -120,17 +120,3 @@ sysenter_fin:
 	sti							// Enable interrupts again
 	sysexit
 
-
-
-ENTRY(writeMSR)
-	push	%ebp
-	mov    	%esp,%ebp
-	mov    	0x08(%ebp),%ecx
-	mov    	0x0c(%ebp),%eax
-	mov		$0,%edx
-	wrmsr						// Write the value in edx:eax to MSR specified by ecx.
-	mov		%ebp,%esp
-	pop		%ebp
-	ret
-
-

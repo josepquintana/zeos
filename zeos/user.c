@@ -17,7 +17,7 @@ int __attribute__ ((__section__(".text.main")))
 
 	/* =============================================================== */
 	
-	char * msg;
+	char *msg;
 	msg = "Writing from inside the user block\n";
 	if(write(1, msg, strlen(msg)) == -1) { perror(); }
 
@@ -43,17 +43,47 @@ int __attribute__ ((__section__(".text.main")))
 
 	/* =============================================================== */
 
-	msg = "Attempting to fork... \nChild PID: ";
+	msg = "Attempting to fork... \n";
 	if(write(1, msg, strlen(msg)) == -1) { perror(); }
 	int child_pid = fork();
-	itoa(child_pid, msg);
-	if(write(1, msg, strlen(msg)) == -1) { perror(); }
-	msg = "\n";
-	if(write(1, msg, strlen(msg)) == -1) { perror(); }
+	if(child_pid == 0) {
+		msg = "Child PID: ";
+		if(write(1, msg, strlen(msg)) == -1) { perror(); }
+		itoa(getpid(), msg);
+		if(write(1, msg, strlen(msg)) == -1) { perror(); }
+		msg = "\n";
+		if(write(1, msg, strlen(msg)) == -1) { perror(); }
+	}
 
 	/* =============================================================== */
-	
-	while(1) { }
+
+	child_pid = fork();
+	itoa(child_pid, msg);
+	if(write(1, msg, strlen(msg)) == -1) { perror(); } 
+	print_new_line();
+
+	child_pid = fork();
+	itoa(child_pid, msg);
+	if(write(1, msg, strlen(msg)) == -1) { perror(); }
+	print_new_line();
+
+	child_pid = fork();
+	itoa(child_pid, msg);
+	if(write(1, msg, strlen(msg)) == -1) { perror(); }
+	print_new_line();
+
+	child_pid = fork();
+	itoa(child_pid, msg);
+	if(write(1, msg, strlen(msg)) == -1) { perror(); }
+	print_new_line();
+
+	msg = "                                                                                                                                                                ================================================================================================================================================================                                                                                                                                                                ";
+	if(write(1, msg, strlen(msg)) == -1) { perror(); }
+
+	while(1)
+	{
+		
+	}
 	
 }
 

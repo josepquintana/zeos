@@ -163,3 +163,42 @@ return4:
 	pop    	%ebp
 	ret
 
+
+
+ENTRY(exit)
+	push	%ebp
+	mov    	%esp,%ebp
+	push 	%esi
+	
+	mov 	$0x1,%eax
+	
+	push	%ecx
+	push	%edx
+	
+	leal	retsysexit5,%esi
+	push	%esi
+	
+	push 	%ebp
+	mov    	%esp,%ebp
+	
+	sysenter
+	
+retsysexit5:
+	pop		%ebp
+	pop		%esi
+	
+	pop		%edx
+	pop		%ecx
+	
+	cmp 	$0,%eax
+	jge		return5
+	neg 	%eax
+	mov 	%eax,errno
+	mov		$-1,%eax
+	
+return5:
+	pop		%esi
+	mov		%ebp,%esp
+	pop    	%ebp
+	ret
+

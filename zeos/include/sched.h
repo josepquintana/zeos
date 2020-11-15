@@ -73,4 +73,7 @@ void schedule(void);
 int get_quantum(struct task_struct *t);
 void set_quantum(struct task_struct *t, int new_quantum);
 
+/* Function to write to the MSR registers */
+void writeMSR(int numMSR, int value);
+
 #endif  /* __SCHED_H__ */

@@ -39,6 +39,34 @@ void perror(void)
 	write(1, "\n", strlen("\n"));
 }
 
+void print_current_pid()
+{
+	char *msg = "\nCurrent PID:\n> ";
+	if(write(1, msg, strlen(msg)) == -1) { perror(); }
+	int pid = getpid();
+	itoa(pid, msg);
+	if(write(1, msg, strlen(msg)) == -1) { perror(); }
+	msg = "\n";
+	if(write(1, msg, strlen(msg)) == -1) { perror(); }
+}
+
+void print_clock_ticks()
+{
+	char *msg = "\nClock ticks:\n> ";
+	if(write(1, msg, strlen(msg)) == -1) { perror(); }
+	int time = gettime();
+	itoa(time, msg);
+	if(write(1, msg, strlen(msg)) == -1) { perror(); }
+	msg = "\n";
+	if(write(1, msg, strlen(msg)) == -1) { perror(); }
+}
+
+void print_new_line()
+{
+	char *msg = "\n";
+	if(write(1, msg, strlen(msg)) == -1) { perror(); }
+}
+
 void itoa(int a, char *b)
 {
   int i, i1;

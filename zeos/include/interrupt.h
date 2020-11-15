@@ -17,4 +17,14 @@ void setTrapHandler(int vector, void (*handler)(), int maxAccessibleFromPL);
 
 void setIdt();
 
+/* Handlers for interrupts */
+void keyboard_handler();
+void clock_handler();
+
+/* Fast system calls (sysenter) handler */
+void syscall_handler_sysenter();
+
+/* Function to write to the MSR registers */
+void writeMSR(int numMSR, int value); /* Use 'long' ¿? */
+
 #endif  /* __INTERRUPT_H__ */

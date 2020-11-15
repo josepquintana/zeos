@@ -235,10 +235,10 @@ void update_sched_data_rr(void)
 int needs_sched_rr (void)
 {
 	// Check if the allowed quantum for the current process has expired
-	if((remaining_allowed_quantum == 0) 
+	if(remaining_allowed_quantum == 0) 
 	{
 		if(! list_empty(&readyqueue)) { return 1; }						// It is necessary to change the current process
-		else { remaining_allowed_quantum = get_quantum(current); }		// Since the are no READY processes there's no need to change the current process
+		else { remaining_allowed_quantum = get_quantum(current()); }		// Since the are no READY processes there's no need to change the current process
 	}
 	return 0; 	// No need to change the current process
 }
@@ -279,8 +279,9 @@ void update_process_state_rr(struct task_struct *t, struct list_head *dst_queue)
 				t->state = ST_BLOCKED; // Update state to BLOCKED
 			}
 			break;
-			
+
 		default:
+			break;
 	}
 }
 
@@ -308,7 +309,7 @@ void sched_next_rr(void)
 	}
 
 	// Change selected next process state to RUN
-	pcb_next->state=ST_RUN;
+	pcb_next->state = ST_RUN;
 	
 	// Set the remaining allowed quantum variable to the value of the selected next process total quantum
 	remaining_allowed_quantum = get_quantum(pcb_next);
@@ -319,10 +320,10 @@ void sched_next_rr(void)
 
 int get_quantum(struct task_struct *t)
 {
-  return t->quantum;
+  	return t->quantum;
 }
 
 void set_quantum(struct task_struct *t, int new_quantum)
 {
-  t->quantum = new_quantum;
+  	t->quantum = new_quantum;
 }
