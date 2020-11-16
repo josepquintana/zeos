@@ -83,12 +83,12 @@ ENTRY(keyboard_handler)
 	SAVE_ALL
 	push	%eax
 	call	update_statistics_user_to_system					  
-	pop		%eax
+	pop 	%eax
 	EOI
 	call	keyboard_routine
 	push	%eax
 	call	update_statistics_system_to_user					  
-	pop		%eax	
+	pop 	%eax	
 	RESTORE_ALL
 	iret
 
@@ -98,12 +98,12 @@ ENTRY(clock_handler)
 	SAVE_ALL
 	push	%eax			 
 	call	update_statistics_user_to_system					  
-	pop		%eax			
+	pop 	%eax			
 	EOI
 	call	clock_routine
 	push	%eax
 	call	update_statistics_system_to_user					  
-	pop		%eax			
+	pop 	%eax			
 	RESTORE_ALL
 	iret
 
@@ -119,13 +119,13 @@ ENTRY(syscall_handler_sysenter)
 	SAVE_ALL
 	
 	cmpl	$0, %eax
-	jl		sysenter_err
+	jl  	sysenter_err
 	cmpl	$MAX_SYSCALL, %eax
-	jg		sysenter_err
+	jg  	sysenter_err
 	 
 	call	*sys_call_table(, %eax, 0x04)
 	
-	jmp		sysenter_fin
+	jmp 	sysenter_fin
 	
 sysenter_err:
 	movl	$-38, %eax	/*ENOSYS*/
