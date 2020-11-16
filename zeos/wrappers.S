@@ -98,7 +98,7 @@ ENTRY(getpid)
 	
 	leal	retsysexit3,%esi
 	push	%esi
-	
+
 	push	%ebp
 	mov 	%esp,%ebp
 	
@@ -107,10 +107,10 @@ ENTRY(getpid)
 retsysexit3:
 	pop 	%ebp
 	pop 	%esi
-			
+
 	pop 	%edx
 	pop 	%ecx
-			
+
 	cmp 	$0,%eax
 	jge 	return3
 	neg 	%eax
