@@ -16,7 +16,7 @@ unsigned long get_ticks(void);
 /* Function to update statistical information about the processes */
 void update_p_stats(unsigned long *state_ticks, unsigned long *elapsed_total_ticks);
 
-/* Functions to update statistical information when entering and leaving the system */
+/* Functions to update statistical information when entering and exiting the system */
 void update_statistics_user_to_system(void);
 void update_statistics_system_to_user(void);
 

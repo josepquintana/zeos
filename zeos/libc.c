@@ -24,6 +24,9 @@ void perror(void)
 		case 9:
 			errmsg = "Bad file descriptor";
 			break;
+		case 11:
+			errmsg = "Try again";
+			break;
 		case 12:
 			errmsg = "Out of memory";
 			break;

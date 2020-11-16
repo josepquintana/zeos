@@ -18,6 +18,7 @@ void copy_data(void *start, void *dest, int size)
 		size --;
 	}
 }
+
 /* Copia de espacio de usuario a espacio de kernel, devuelve 0 si ok y -1 si error */
 int copy_from_user(void *start, void *dest, int size)
 {
@@ -35,6 +36,7 @@ int copy_from_user(void *start, void *dest, int size)
 	}
 	return 0;
 }
+
 /* Copia de espacio de kernel a espacio de usuario, devuelve 0 si ok y -1 si error */
 int copy_to_user(void *start, void *dest, int size)
 {
@@ -72,15 +74,15 @@ int access_ok(int type, const void * addr, unsigned long size)
 
 	switch(type)
 	{
-	case VERIFY_WRITE:
-	  /* Should suppose no support for automodifyable code */
-	  if ((addr_ini>=USER_FIRST_PAGE+NUM_PAG_CODE)&&
-		  (addr_fin<=USER_FIRST_PAGE+NUM_PAG_CODE+NUM_PAG_DATA))
-	  return 1;
-	default:
-	  if ((addr_ini>=USER_FIRST_PAGE)&&
-	(addr_fin<=(USER_FIRST_PAGE+NUM_PAG_CODE+NUM_PAG_DATA)))
-		  return 1;
+		case VERIFY_WRITE:
+			/* Should suppose no support for automodifyable code */
+			if ((addr_ini>=USER_FIRST_PAGE+NUM_PAG_CODE)&&(addr_fin<=USER_FIRST_PAGE+NUM_PAG_CODE+NUM_PAG_DATA)) {
+				return 1;
+			}
+		default:
+			if ((addr_ini>=USER_FIRST_PAGE)&&(addr_fin<=(USER_FIRST_PAGE+NUM_PAG_CODE+NUM_PAG_DATA))) {
+				return 1;
+			}
 	}
 	return 0;
 }

@@ -17,7 +17,6 @@ OBJCOPY = objcopy -O binary -R .note -R .comment -S
 
 INCLUDEDIR = include
 
-
 CFLAGS = -m32 -O2  -g -fno-omit-frame-pointer -ffreestanding -Wall -I$(INCLUDEDIR) -fno-PIC
 ASMFLAGS = -I$(INCLUDEDIR)
 LDFLAGS = -g -melf_i386
@@ -44,6 +43,8 @@ USROBJ = \
 	suma.o \
 	wrappers.o \
 	# libjp.a \
+
+#########################################################
 
 all:zeos.bin
 
@@ -95,9 +96,7 @@ utils.o:utils.c $(INCLUDEDIR)/utils.h
 asm_utils.s: asm_utils.S $(INCLUDEDIR)/asm.h $(INCLUDEDIR)/segment.h
 	$(CPP) $(ASMFLAGS) -o $@ $<
 
-
 system.o:system.c $(INCLUDEDIR)/hardware.h system.lds $(SYSOBJ) $(INCLUDEDIR)/segment.h $(INCLUDEDIR)/types.h $(INCLUDEDIR)/interrupt.h $(INCLUDEDIR)/system.h $(INCLUDEDIR)/sched.h $(INCLUDEDIR)/mm.h $(INCLUDEDIR)/io.h $(INCLUDEDIR)/mm_address.h 
-
 
 system: system.o system.lds $(SYSOBJ)
 	$(LD) $(LDFLAGS) -T system.lds -o $@ $< $(SYSOBJ) $(LIBZEOS)
@@ -105,6 +104,7 @@ system: system.o system.lds $(SYSOBJ)
 user: user.o user.lds $(USROBJ) 
 	$(LD) $(LDFLAGS) -T user.lds -o $@ $< $(USROBJ)
 
+#########################################################
 
 clean:
 	rm -f *.o *.s bochsout.txt parport.out system.out system bootsect zeos.bin user user.out *~ build 

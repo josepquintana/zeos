@@ -2,15 +2,10 @@
  * sys.c - Syscalls implementation
  */
 #include <devices.h>
-
 #include <utils.h>
-
 #include <io.h>
-
 #include <mm.h>
-
 #include <mm_address.h>
-
 #include <sched.h>
 
 #define LECTURA 0
@@ -60,23 +55,23 @@ int sys_ni_syscall()
 * SYS_WRITE
 *
 * fd: file descriptor. In this delivery it must always be 1.
-* buffer: pointer to the bytes.
+* *buffer: pointer to the bytes.
 * size: number of bytes.
 * return -> Negative number in case of error (specifying the kind of error) and the number of bytes written if OK.
 *
 */
-int sys_write(int fd, char * buffer, int size) 
+int sys_write(int fd, char *buffer, int size) 
 {
 	int error_fd = check_fd(fd, ESCRIPTURA);
-	if(error_fd < 0) return error_fd; 
+	if(error_fd < 0) return error_fd; /*EBADF or EACCES*/
 	
-	if(buffer == NULL) return -14; /*EFAULT*/
+	if(! access_ok(VERIFY_READ, buffer, size)) { return -14; /*EFAULT*/ }
 	
 	if(size < 0) return -22; /*EINVAL*/
 	
 	char local_buffer[WRITE_BUFFER];
 	int i_size = size;
-	int ret_swc = -5; /*EIO (initialization)*/
+	int ret_swc = -5; /*EIO*/ // Errno initialization
 	
 	while (i_size > WRITE_BUFFER) {
 		copy_from_user(buffer, local_buffer, WRITE_BUFFER);
@@ -185,9 +180,6 @@ int sys_fork()
 		set_ss_pag(page_table_child, PAG_LOG_INIT_CODE + page, parent_frame);
 	} 
 
-	/* ===========*/
-	/* ¿? HELP ¿? */
-	/* ===========*/
 	// Copy the user DATA+STACK pages from the parent process to the child. To simultaneously access both pages and make the copy, it is required to 
 	// temporally map the child physical pages to unused entries of the page table of the parent.
  	page_table_entry *page_table_parent = get_PT(current()); // Get the Page Table address for the parent process.
@@ -213,16 +205,13 @@ int sys_fork()
 		: "=g" (parent_ebp_reg)
 		: );
 
-	parent_ebp_reg = parent_ebp_reg - (int) current() + (int) task_child; // ¿?
-	pcb_child->ebp_reg_pos = parent_ebp_reg + sizeof(DWord); // ¿?
+	parent_ebp_reg = parent_ebp_reg - (int) current() + (int) task_child;
+	pcb_child->ebp_reg_pos = parent_ebp_reg + sizeof(DWord);
 	
-	/* ===========*/
-	/* ¿? HELP ¿? */
-	/* ===========*/
 	// Prepare the stack with the content expected by "task_switch" to be able to restore it in the future when switching contexts. 
 	// This is done by emulating the result of a call to "task_switch" 
-	DWord aux_parent_ebp_reg = *(DWord*) parent_ebp_reg; // ¿?
-	pcb_child->ebp_reg_pos -= sizeof(DWord);  // ¿?
+	DWord aux_parent_ebp_reg = *(DWord*) parent_ebp_reg;
+	pcb_child->ebp_reg_pos -= sizeof(DWord);
 	*(DWord*) pcb_child->ebp_reg_pos = (DWord) &ret_from_fork;
 	pcb_child->ebp_reg_pos -= sizeof(DWord);
 	*(DWord*) pcb_child->ebp_reg_pos = aux_parent_ebp_reg;
@@ -231,7 +220,7 @@ int sys_fork()
 	list_add_tail(&(pcb_child->list), &readyqueue);	
 	pcb_child->state = ST_READY;
 
-	/* It is not necessary to set total quantum allowed for the child process since it inherits it from the parent process */
+	/* NOTE: It is not necessary to set total quantum allowed for the child process since it inherits it from the parent process */
 
 	// Initialize statistical information
 	init_stats(&(pcb_child->p_stats));

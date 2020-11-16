@@ -35,6 +35,7 @@
 /**                                              **/
 /**************************************************/
 
+
 #define SAVE_ALL \
 	pushl %gs; \
 	pushl %fs; \
@@ -52,6 +53,7 @@
 	movl %edx, %es;
 
 
+
 #define RESTORE_ALL\
 	popl %ebx; \
 	popl %ecx; \
@@ -66,13 +68,16 @@
 	popl %gs;
 
 
+
 #define EOI \
 	movb $0x20, %al; \
 	outb %al, $0x20;
 	
 	
-/************************************************/	
 	
+/************************************************/	
+
+
 	
 ENTRY(keyboard_handler)
 	SAVE_ALL
@@ -80,12 +85,13 @@ ENTRY(keyboard_handler)
 	call	update_statistics_user_to_system					  
 	pop		%eax
 	EOI
-	call 	keyboard_routine
+	call	keyboard_routine
 	push	%eax
 	call	update_statistics_system_to_user					  
 	pop		%eax	
 	RESTORE_ALL
 	iret
+
 
 
 ENTRY(clock_handler)
@@ -94,7 +100,7 @@ ENTRY(clock_handler)
 	call	update_statistics_user_to_system					  
 	pop		%eax			
 	EOI
-	call 	clock_routine
+	call	clock_routine
 	push	%eax
 	call	update_statistics_system_to_user					  
 	pop		%eax			
@@ -112,23 +118,24 @@ ENTRY(syscall_handler_sysenter)
 	
 	SAVE_ALL
 	
-	cmpl 	$0, %eax
-	jl 		sysenter_err
-	cmpl 	$MAX_SYSCALL, %eax
-	jg 		sysenter_err
+	cmpl	$0, %eax
+	jl		sysenter_err
+	cmpl	$MAX_SYSCALL, %eax
+	jg		sysenter_err
 	 
 	call	*sys_call_table(, %eax, 0x04)
 	
 	jmp		sysenter_fin
 	
 sysenter_err:
-	movl 	$-38, %eax	/*ENOSYS*/
+	movl	$-38, %eax	/*ENOSYS*/
 	
 sysenter_fin:
-	movl 	%eax, 0x18(%esp)
+	movl	%eax, 0x18(%esp)
 	RESTORE_ALL
-	movl 	(%esp), %edx		// Return address
-	movl 	12(%esp), %ecx		// User stack address
+	movl	(%esp), %edx		// Return address
+	movl	12(%esp), %ecx		// User stack address
 	sti							// Enable interrupts again
 	sysexit
+
 

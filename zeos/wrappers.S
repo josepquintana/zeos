@@ -3,14 +3,14 @@
 
 ENTRY(write)
 	push	%ebp
-	mov    	%esp,%ebp
-	push 	%ebx
-	push 	%esi
-	mov    	0x08(%ebp),%ebx
-	mov    	0x0c(%ebp),%ecx
-	mov    	0x10(%ebp),%edx
+	mov		%esp,%ebp
+	push	%ebx
+	push	%esi
+	mov		0x08(%ebp),%ebx
+	mov		0x0c(%ebp),%ecx
+	mov		0x10(%ebp),%edx
 	
-	mov 	$4,%eax
+	mov		$4,%eax
 	
 	push	%ecx
 	push	%edx
@@ -18,8 +18,8 @@ ENTRY(write)
 	leal	retsysexit1,%esi
 	push	%esi
 	
-	push 	%ebp
-	mov    	%esp,%ebp
+	push	%ebp
+	mov		%esp,%ebp
 	
 	sysenter
 	
@@ -30,17 +30,17 @@ retsysexit1:
 	pop		%edx
 	pop		%ecx
 	
-	cmp 	$0,%eax
+	cmp		$0,%eax
 	jge		return1
-	neg 	%eax
-	mov 	%eax,errno
+	neg		%eax
+	mov		%eax,errno
 	mov		$-1,%eax
 	
 return1:
 	pop		%esi
 	pop		%ebx
 	mov		%ebp,%esp
-	pop    	%ebp
+	pop		%ebp
 	ret
 
 
@@ -48,10 +48,10 @@ return1:
 
 ENTRY(gettime)
 	push	%ebp
-	mov    	%esp,%ebp
-	push 	%esi
+	mov		%esp,%ebp
+	push	%esi
 	
-	mov 	$10,%eax
+	mov		$10,%eax
 	
 	push	%ecx
 	push	%edx
@@ -59,8 +59,8 @@ ENTRY(gettime)
 	leal	retsysexit2,%esi
 	push	%esi
 	
-	push 	%ebp
-	mov    	%esp,%ebp
+	push	%ebp
+	mov		%esp,%ebp
 	
 	sysenter
 	
@@ -71,16 +71,16 @@ retsysexit2:
 	pop		%edx
 	pop		%ecx
 	
-	cmp 	$0,%eax
+	cmp		$0,%eax
 	jge		return2
-	neg 	%eax
-	mov 	%eax,errno
+	neg		%eax
+	mov		%eax,errno
 	mov		$-1,%eax
 	
 return2:
 	pop		%esi
 	mov		%ebp,%esp
-	pop    	%ebp
+	pop		%ebp
 	ret
 
 
@@ -88,10 +88,10 @@ return2:
 
 ENTRY(getpid)
 	push	%ebp
-	mov    	%esp,%ebp
-	push 	%esi
+	mov		%esp,%ebp
+	push	%esi
 	
-	mov 	$20,%eax
+	mov		$20,%eax
 	
 	push	%ecx
 	push	%edx
@@ -99,8 +99,8 @@ ENTRY(getpid)
 	leal	retsysexit3,%esi
 	push	%esi
 	
-	push 	%ebp
-	mov    	%esp,%ebp
+	push	%ebp
+	mov		%esp,%ebp
 	
 	sysenter
 	
@@ -111,16 +111,16 @@ retsysexit3:
 	pop		%edx
 	pop		%ecx
 	
-	cmp 	$0,%eax
+	cmp		$0,%eax
 	jge		return3
-	neg 	%eax
-	mov 	%eax,errno
+	neg		%eax
+	mov		%eax,errno
 	mov		$-1,%eax
 	
 return3:
 	pop		%esi
 	mov		%ebp,%esp
-	pop    	%ebp
+	pop		%ebp
 	ret
 
 
@@ -128,10 +128,10 @@ return3:
 
 ENTRY(fork)
 	push	%ebp
-	mov    	%esp,%ebp
-	push 	%esi
+	mov		%esp,%ebp
+	push	%esi
 	
-	mov 	$2,%eax
+	mov		$2,%eax
 	
 	push	%ecx
 	push	%edx
@@ -139,8 +139,8 @@ ENTRY(fork)
 	leal	retsysexit4,%esi
 	push	%esi
 	
-	push 	%ebp
-	mov    	%esp,%ebp
+	push	%ebp
+	mov		%esp,%ebp
 	
 	sysenter
 	
@@ -151,26 +151,26 @@ retsysexit4:
 	pop		%edx
 	pop		%ecx
 	
-	cmp 	$0,%eax
+	cmp		$0,%eax
 	jge		return4
-	neg 	%eax
-	mov 	%eax,errno
+	neg		%eax
+	mov		%eax,errno
 	mov		$-1,%eax
 	
 return4:
 	pop		%esi
 	mov		%ebp,%esp
-	pop    	%ebp
+	pop		%ebp
 	ret
 
 
 
 ENTRY(exit)
 	push	%ebp
-	mov    	%esp,%ebp
-	push 	%esi
+	mov		%esp,%ebp
+	push	%esi
 	
-	mov 	$1,%eax
+	mov		$1,%eax
 	
 	push	%ecx
 	push	%edx
@@ -178,8 +178,8 @@ ENTRY(exit)
 	leal	retsysexit5,%esi
 	push	%esi
 	
-	push 	%ebp
-	mov    	%esp,%ebp
+	push	%ebp
+	mov		%esp,%ebp
 	
 	sysenter
 	
@@ -190,29 +190,29 @@ retsysexit5:
 	pop		%edx
 	pop		%ecx
 	
-	cmp 	$0,%eax
+	cmp		$0,%eax
 	jge		return5
-	neg 	%eax
-	mov 	%eax,errno
+	neg		%eax
+	mov		%eax,errno
 	mov		$-1,%eax
 	
 return5:
 	pop		%esi
 	mov		%ebp,%esp
-	pop    	%ebp
+	pop		%ebp
 	ret
 
 
 
 ENTRY(get_stats)
 	push	%ebp
-	mov    	%esp,%ebp
-	push 	%ebx
-	push 	%esi
-	mov    	0x08(%ebp),%ebx
-	mov    	0x0c(%ebp),%ecx
+	mov		%esp,%ebp
+	push	%ebx
+	push	%esi
+	mov		0x08(%ebp),%ebx
+	mov		0x0c(%ebp),%ecx
 	
-	mov 	$35,%eax
+	mov		$35,%eax
 	
 	push	%ecx
 	push	%edx
@@ -220,8 +220,8 @@ ENTRY(get_stats)
 	leal	retsysexit6,%esi
 	push	%esi
 	
-	push 	%ebp
-	mov    	%esp,%ebp
+	push	%ebp
+	mov		%esp,%ebp
 	
 	sysenter
 	
@@ -232,16 +232,16 @@ retsysexit6:
 	pop		%edx
 	pop		%ecx
 	
-	cmp 	$0,%eax
+	cmp		$0,%eax
 	jge		return6
-	neg 	%eax
-	mov 	%eax,errno
+	neg		%eax
+	mov		%eax,errno
 	mov		$-1,%eax
 	
 return6:
 	pop		%esi
 	pop		%ebx
 	mov		%ebp,%esp
-	pop    	%ebp
+	pop		%ebp
 	ret
 

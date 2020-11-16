@@ -7,10 +7,9 @@
 #include <io.h>
 #include <utils.h>
 
-union task_union task[NR_TASKS]
-  __attribute__((__section__(".data.task")));
+union task_union task[NR_TASKS] __attribute__((__section__(".data.task")));
 
-#if 1 // why initially there's a zero ?
+#if 1 // Initially it was "#if 0"
 struct task_struct *list_head_to_task_struct(struct list_head *l)
 {
   return list_entry(l, struct task_struct, list);
@@ -181,9 +180,6 @@ void init_stats(struct stats *s)
 	s->remaining_ticks = get_ticks();
 }
  
-/* ======= */ 
-/* HELP ?? */
-/* ======= */
 void inner_task_switch(union task_union *new)
 {
 	/* Restore the execution of the new process in the same state it had before invoking this routine */
@@ -223,9 +219,8 @@ void inner_task_switch(union task_union *new)
 }
 
 /* 
- * Returns the  address of the current PCB (task_struct) from the 
- * stack pointer (esp register) due to their overlapping of the 
- * physical memory space. (The task_struct is located at the begining)
+ * Returns the  address of the current PCB (task_struct) from the stack pointer (esp register) due to
+ * their overlapping of the physical memory space. (The task_struct is located at the begining)
  */ 
 struct task_struct* current()
 {
@@ -274,7 +269,7 @@ int needs_sched_rr(void)
 	if(remaining_allowed_quantum == 0) 
 	{
 		if(! list_empty(&readyqueue)) { return 1; }						// It is necessary to change the current process
-		else { remaining_allowed_quantum = get_quantum(current()); }		// Since the are no READY processes there's no need to change the current process
+		else { remaining_allowed_quantum = get_quantum(current()); }	// Since the are no READY processes there's no need to change the current process
 	}
 	return 0; 	// No need to change the current process
 }
@@ -285,7 +280,6 @@ int needs_sched_rr(void)
  * task_struct *t: PCB of the process to update 
  * list_head *dest_queue: queue according to the new state of the process. 
  *
- * TODO: Update the readyqueue, if current process is not the idle process, by inserting the current process at the end of the readyqueue.
  */
 void update_process_state_rr(struct task_struct *t, struct list_head *dst_queue) 
 {
@@ -327,7 +321,6 @@ void update_process_state_rr(struct task_struct *t, struct list_head *dst_queue)
 
 /*
  * Select the next process to execute, extract it from the Ready queue and to invoke the context switch process
- *
  */
 void sched_next_rr(void)
 {

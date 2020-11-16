@@ -24,7 +24,10 @@ void clock_handler();
 /* Fast system calls (sysenter) handler */
 void syscall_handler_sysenter();
 
-/* Function to write to the MSR registers */
-void writeMSR(int numMSR, int value); /* Use 'long' ¿? */
+/* 
+ * Function to write to the MSR registers 
+ * TO DO: Use two variables and store valueHIGH and valueLOW
+*/
+void writeMSR(int numMSR, int value);
 
 #endif  /* __INTERRUPT_H__ */
