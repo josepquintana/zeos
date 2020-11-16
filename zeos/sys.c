@@ -199,22 +199,22 @@ int sys_fork()
 	last_pid += 1;
 
 	// Map the parent's EBP register position in the stack to the child process' PCB
-	int parent_ebp_reg;
+	int parent_kernel_esp;
 	__asm__ __volatile__ (
 		"mov %%ebp, %0\n\t"
-		: "=g" (parent_ebp_reg)
+		: "=g" (parent_kernel_esp)
 		: );
 
-	parent_ebp_reg = parent_ebp_reg - (int) current() + (int) task_child;
-	pcb_child->ebp_reg_pos = parent_ebp_reg + sizeof(DWord);
+	parent_kernel_esp = parent_kernel_esp - (int) current() + (int) task_child;
+	pcb_child->kernel_esp = parent_kernel_esp + sizeof(DWord);
 	
 	// Prepare the stack with the content expected by "task_switch" to be able to restore it in the future when switching contexts. 
 	// This is done by emulating the result of a call to "task_switch" 
-	DWord aux_parent_ebp_reg = *(DWord*) parent_ebp_reg;
-	pcb_child->ebp_reg_pos -= sizeof(DWord);
-	*(DWord*) pcb_child->ebp_reg_pos = (DWord) &ret_from_fork;
-	pcb_child->ebp_reg_pos -= sizeof(DWord);
-	*(DWord*) pcb_child->ebp_reg_pos = aux_parent_ebp_reg;
+	DWord aux_parent_kernel_esp = *(DWord*) parent_kernel_esp;
+	pcb_child->kernel_esp -= sizeof(DWord);
+	*(DWord*) pcb_child->kernel_esp = (DWord) &ret_from_fork;
+	pcb_child->kernel_esp -= sizeof(DWord);
+	*(DWord*) pcb_child->kernel_esp = aux_parent_kernel_esp;
 
 	// Insert new child process into the Ready queue and update its state since now it is ready to be assigned to the CPU when available
 	list_add_tail(&(pcb_child->list), &readyqueue);	

@@ -19,7 +19,7 @@ struct task_struct {
   	int PID;								/* Process ID. This MUST be the first field of the struct. */
   	page_table_entry * dir_pages_baseAddr; 	/* Directory base address */
   	struct list_head list;					/* Task struct enqueuing */
-	unsigned int ebp_reg_pos;				/* Position of the stack with the initial value for the EBP register */
+	unsigned int kernel_esp;				/* Position of the stack with the initial value for the EBP register */
 	enum state_t state;						/* State of the process */
 	int quantum;							/* Quantum: Time allowed to run in the CPU */
 	struct stats p_stats;					/* Statistical information of the process */

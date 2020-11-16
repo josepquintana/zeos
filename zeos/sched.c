@@ -91,7 +91,7 @@ void init_idle (void)
 	union task_union *tu0 = (union task_union*) pcb;
 	tu0->stack[KERNEL_STACK_SIZE-1] = (unsigned long) &cpu_idle; 				/* Return address */
 	tu0->stack[KERNEL_STACK_SIZE-2] = 0;										/* Register EBP */
-	pcb->ebp_reg_pos = (unsigned int) &(tu0->stack[KERNEL_STACK_SIZE-2]);		/* Current top of the stack (EBP) */
+	pcb->kernel_esp = (unsigned int) &(tu0->stack[KERNEL_STACK_SIZE-2]);		/* Current top of the stack (EBP) */
 
 	// Initialize global idle_task variable
 	idle_task = pcb;
@@ -194,7 +194,7 @@ void inner_task_switch(union task_union *new)
 	// Store current value of EBP register
 	__asm__ __volatile__ (
 		"mov %%ebp, %0\n\t"
-		: "=g" (current()->ebp_reg_pos)
+		: "=g" (current()->kernel_esp)
 		: );
 
 	// Change current system stack by setting the ESP registry to point to the stored EBP value in the new_task PCB
@@ -202,7 +202,7 @@ void inner_task_switch(union task_union *new)
 	__asm__ __volatile__ (
 		"mov %0, %%esp\n\t"
 		:
-		: "g" (new->task.ebp_reg_pos) );
+		: "g" (new->task.kernel_esp) );
 	
 	// Restore EBP register from the stack
 	__asm__ __volatile__ (
