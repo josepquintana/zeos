@@ -19,12 +19,12 @@ int __attribute__ ((__section__(".text.main"))) main(void)
 
 	/* ================================================================ */
 	
-	msg = "Writing from inside the user block\n";
+	msg = "Writing from inside the user block\n\n";
 	if(write(1, msg, strlen(msg)) == -1) { perror(); }
 
 	/* ================================================================ */
 	
-	msg = "\nClock ticks: ";
+	msg = "Clock ticks: ";
 	write(1, msg, strlen(msg));
 	int time = gettime();
 	itoa(time, msg);
@@ -33,7 +33,7 @@ int __attribute__ ((__section__(".text.main"))) main(void)
 
 	/* ================================================================ */
 
-	msg = "\nMy PID: ";
+	msg = "My PID: ";
 	write(1, msg, strlen(msg));
 	int pid = getpid();
 	itoa(pid, msg);
@@ -42,19 +42,19 @@ int __attribute__ ((__section__(".text.main"))) main(void)
 
 	/* ================================================================ */
 
-	msg = "\nForking... \n";
+	msg = "\nForking...\n";
 	write(1, msg, strlen(msg));
 	int child_pid = fork();
 
 	if(child_pid == 0) {
-		msg = "\nHello from Child! PID: ";
+		msg = "Hello from Child! PID: ";
 		write(1, msg, strlen(msg));
 		itoa(getpid(), msg);
 		write(1, msg, strlen(msg));
 		write(1, "\n", 1);
 	}
 	else if(child_pid > 0) {
-		msg = "\nHello from Parent! PID: ";
+		msg = "Hello from Parent! PID: ";
 		write(1, msg, strlen(msg));
 		itoa(getpid(), msg);
 		write(1, msg, strlen(msg));
@@ -124,11 +124,10 @@ int __attribute__ ((__section__(".text.main"))) main(void)
 	/* ================================================================ */
 
 	if(getpid() == 100) { 
+		msg = "\nProcess PID = 100 is exiting\n";
+		write(1, msg, strlen(msg));
+
 		exit();
-		msg = "\nProcess PID = 100 has exited\n";
-		write(1, msg, strlen(msg));
-		itoa(getpid(), msg);
-		write(1, msg, strlen(msg));
 
 		// Check that the process has exited succesfully
 		msg = "\nThis line will never be printed because this process does not exist anymore\n";

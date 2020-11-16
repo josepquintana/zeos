@@ -98,7 +98,7 @@ int __attribute__((__section__(".text.main"))) main(void)
 	/* Initialize 'zeos_ticks' variable */
 	zeos_ticks = 0;
 
-	printk_color("\nEntering user mode...\n\n");
+	printk_color("\nEntering user mode...\n");
 
 	enable_int();
 
