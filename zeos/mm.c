@@ -224,9 +224,9 @@ void free_user_pages( struct task_struct *task )
 	int pag;
 	page_table_entry * process_PT =  get_PT(task);
     /* DATA */
-	for (pag=0;pag<NUM_PAG_DATA;pag++){
+	for (pag=0;pag<NUM_PAG_DATA;pag++) {
 		free_frame(process_PT[PAG_LOG_INIT_DATA+pag].bits.pbase_addr);
-        process_PT[PAG_LOG_INIT_DATA+pag].entry = 0;
+		process_PT[PAG_LOG_INIT_DATA+pag].entry = 0;
 	}
 }
 
@@ -246,7 +246,6 @@ void set_ss_pag(page_table_entry *PT, unsigned page, unsigned frame)
 	PT[page].bits.user=1;
 	PT[page].bits.rw=1;
 	PT[page].bits.present=1;
-
 }
 
 /* del_ss_pag - Removes mapping from logical page 'logical_page' */
