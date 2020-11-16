@@ -10,7 +10,7 @@ ENTRY(write)
 	mov    	0x0c(%ebp),%ecx
 	mov    	0x10(%ebp),%edx
 	
-	mov 	$0x04,%eax
+	mov 	$4,%eax
 	
 	push	%ecx
 	push	%edx
@@ -51,7 +51,7 @@ ENTRY(gettime)
 	mov    	%esp,%ebp
 	push 	%esi
 	
-	mov 	$0x0a,%eax
+	mov 	$10,%eax
 	
 	push	%ecx
 	push	%edx
@@ -91,7 +91,7 @@ ENTRY(getpid)
 	mov    	%esp,%ebp
 	push 	%esi
 	
-	mov 	$0x14,%eax
+	mov 	$20,%eax
 	
 	push	%ecx
 	push	%edx
@@ -131,7 +131,7 @@ ENTRY(fork)
 	mov    	%esp,%ebp
 	push 	%esi
 	
-	mov 	$0x2,%eax
+	mov 	$2,%eax
 	
 	push	%ecx
 	push	%edx
@@ -170,7 +170,7 @@ ENTRY(exit)
 	mov    	%esp,%ebp
 	push 	%esi
 	
-	mov 	$0x1,%eax
+	mov 	$1,%eax
 	
 	push	%ecx
 	push	%edx
@@ -198,6 +198,49 @@ retsysexit5:
 	
 return5:
 	pop		%esi
+	mov		%ebp,%esp
+	pop    	%ebp
+	ret
+
+
+
+ENTRY(get_stats)
+	push	%ebp
+	mov    	%esp,%ebp
+	push 	%ebx
+	push 	%esi
+	mov    	0x08(%ebp),%ebx
+	mov    	0x0c(%ebp),%ecx
+	
+	mov 	$35,%eax
+	
+	push	%ecx
+	push	%edx
+	
+	leal	retsysexit6,%esi
+	push	%esi
+	
+	push 	%ebp
+	mov    	%esp,%ebp
+	
+	sysenter
+	
+retsysexit6:
+	pop		%ebp
+	pop		%esi
+	
+	pop		%edx
+	pop		%ecx
+	
+	cmp 	$0,%eax
+	jge		return6
+	neg 	%eax
+	mov 	%eax,errno
+	mov		$-1,%eax
+	
+return6:
+	pop		%esi
+	pop		%ebx
 	mov		%ebp,%esp
 	pop    	%ebp
 	ret

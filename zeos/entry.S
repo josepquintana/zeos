@@ -76,16 +76,28 @@
 	
 ENTRY(keyboard_handler)
 	SAVE_ALL
+	push	%eax
+	call	update_statistics_user_to_system					  
+	pop		%eax
 	EOI
-	call keyboard_routine
+	call 	keyboard_routine
+	push	%eax
+	call	update_statistics_system_to_user					  
+	pop		%eax	
 	RESTORE_ALL
 	iret
 
 
 ENTRY(clock_handler)
 	SAVE_ALL
+	push	%eax			 
+	call	update_statistics_user_to_system					  
+	pop		%eax			
 	EOI
-	call clock_routine
+	call 	clock_routine
+	push	%eax
+	call	update_statistics_system_to_user					  
+	pop		%eax			
 	RESTORE_ALL
 	iret
 

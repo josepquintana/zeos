@@ -16,12 +16,6 @@ int gettime();
 
 void perror(void);
 
-void print_current_pid();
-
-void print_clock_ticks();
-
-void print_new_line();
-
 int addASM(int par1, int par2);
 
 void itoa(int a, char *b);
@@ -33,5 +27,7 @@ int getpid();
 int fork();
 
 void exit();
+
+int get_stats(int pid, struct stats *st);
 
 #endif  /* __LIBC_H__ */

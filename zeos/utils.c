@@ -5,52 +5,52 @@
 
 void copy_data(void *start, void *dest, int size)
 {
-  DWord *p = start, *q = dest;
-  Byte *p1, *q1;
-  while(size > 4) {
-    *q++ = *p++;
-    size -= 4;
-  }
-  p1=(Byte*)p;
-  q1=(Byte*)q;
-  while(size > 0) {
-    *q1++ = *p1++;
-    size --;
-  }
+	DWord *p = start, *q = dest;
+	Byte *p1, *q1;
+	while(size > 4) {
+		*q++ = *p++;
+		size -= 4;
+	}
+	p1=(Byte*)p;
+	q1=(Byte*)q;
+	while(size > 0) {
+		*q1++ = *p1++;
+		size --;
+	}
 }
-/* Copia de espacio de usuario a espacio de kernel, devuelve 0 si ok y -1 si error*/
+/* Copia de espacio de usuario a espacio de kernel, devuelve 0 si ok y -1 si error */
 int copy_from_user(void *start, void *dest, int size)
 {
-  DWord *p = start, *q = dest;
-  Byte *p1, *q1;
-  while(size > 4) {
-    *q++ = *p++;
-    size -= 4;
-  }
-  p1=(Byte*)p;
-  q1=(Byte*)q;
-  while(size > 0) {
-    *q1++ = *p1++;
-    size --;
-  }
-  return 0;
+	DWord *p = start, *q = dest;
+	Byte *p1, *q1;
+	while(size > 4) {
+		*q++ = *p++;
+		size -= 4;
+	}
+	p1=(Byte*)p;
+	q1=(Byte*)q;
+	while(size > 0) {
+		*q1++ = *p1++;
+		size --;
+	}
+	return 0;
 }
-/* Copia de espacio de kernel a espacio de usuario, devuelve 0 si ok y -1 si error*/
+/* Copia de espacio de kernel a espacio de usuario, devuelve 0 si ok y -1 si error */
 int copy_to_user(void *start, void *dest, int size)
 {
-  DWord *p = start, *q = dest;
-  Byte *p1, *q1;
-  while(size > 4) {
-    *q++ = *p++;
-    size -= 4;
-  }
-  p1=(Byte*)p;
-  q1=(Byte*)q;
-  while(size > 0) {
-    *q1++ = *p1++;
-    size --;
-  }
-  return 0;
+	DWord *p = start, *q = dest;
+	Byte *p1, *q1;
+	while(size > 4) {
+		*q++ = *p++;
+		size -= 4;
+	}
+	p1=(Byte*)p;
+	q1=(Byte*)q;
+	while(size > 0) {
+		*q1++ = *p1++;
+		size --;
+	}
+	return 0;
 }
 
 /* access_ok: Checks if a user space pointer is valid
@@ -64,25 +64,25 @@ int copy_to_user(void *start, void *dest, int size)
  */
 int access_ok(int type, const void * addr, unsigned long size)
 {
-  unsigned long addr_ini, addr_fin;
+	unsigned long addr_ini, addr_fin;
 
-  addr_ini=(((unsigned long)addr)>>12);
-  addr_fin=((((unsigned long)addr)+size)>>12);
-  if (addr_fin < addr_ini) return 0; //This looks like an overflow ... deny access
+	addr_ini=(((unsigned long)addr)>>12);
+	addr_fin=((((unsigned long)addr)+size)>>12);
+	if (addr_fin < addr_ini) return 0; //This looks like an overflow ... deny access
 
-  switch(type)
-  {
-    case VERIFY_WRITE:
-      /* Should suppose no support for automodifyable code */
-      if ((addr_ini>=USER_FIRST_PAGE+NUM_PAG_CODE)&&
-          (addr_fin<=USER_FIRST_PAGE+NUM_PAG_CODE+NUM_PAG_DATA))
+	switch(type)
+	{
+	case VERIFY_WRITE:
+	  /* Should suppose no support for automodifyable code */
+	  if ((addr_ini>=USER_FIRST_PAGE+NUM_PAG_CODE)&&
+		  (addr_fin<=USER_FIRST_PAGE+NUM_PAG_CODE+NUM_PAG_DATA))
 	  return 1;
-    default:
-      if ((addr_ini>=USER_FIRST_PAGE)&&
-  	(addr_fin<=(USER_FIRST_PAGE+NUM_PAG_CODE+NUM_PAG_DATA)))
-          return 1;
-  }
-  return 0;
+	default:
+	  if ((addr_ini>=USER_FIRST_PAGE)&&
+	(addr_fin<=(USER_FIRST_PAGE+NUM_PAG_CODE+NUM_PAG_DATA)))
+		  return 1;
+	}
+	return 0;
 }
 
 /*
@@ -95,15 +95,14 @@ int access_ok(int type, const void * addr, unsigned long size)
  */
 void update_p_stats(unsigned long *state_ticks, unsigned long *elapsed_total_ticks)
 {
-  // Get the elapsed ticks since the machine was powered on
-  unsigned long ticks = get_ticks();
+	// Get the elapsed ticks since the machine was powered on
+	unsigned long ticks = get_ticks();
 
-  // Update current state ticks (user_ticks OR system_ticks OR ready_ticks)
-  *state_ticks += ticks - *elapsed_total_ticks;
+	// Update current state ticks (user_ticks OR system_ticks OR ready_ticks)
+	*state_ticks += ticks - *elapsed_total_ticks;
 
-  // Update total elapsed ticks value
-  *elapsed_total_ticks = ticks;
-
+	// Update total elapsed ticks value
+	*elapsed_total_ticks = ticks;
 }
 
 #define CYCLESPERTICK 109000

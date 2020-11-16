@@ -38,13 +38,13 @@ int check_fd(int fd, int permissions)
 }
 
 /* Update statistical information of this process when entering the system from user space */
-void update_statistics_user_to_sysem(void)
+void update_statistics_user_to_system(void)
 {
 	update_p_stats(&(current()->p_stats.user_ticks), &(current()->p_stats.elapsed_total_ticks));
 }
 
 /* Update statistical information of this process when leaving the system to user space */
-void update_statistics_sysem_to_user(void)
+void update_statistics_system_to_user(void)
 {
 	update_p_stats(&(current()->p_stats.system_ticks), &(current()->p_stats.elapsed_total_ticks));
 }
@@ -265,5 +265,41 @@ void sys_exit()
 
  	// Schedule the execution of the next READY process and make a context switch
  	sched_next_rr();
+}
+
+/*
+ * SYS_GET_STATS
+ *
+ * pid: process identifier whose statistics get_stats will get
+ * st: pointer to the user buffer to store the statistics.
+ * return -> Negative number in case of error (specifying the kind of error) and the number of bytes written if OK.
+ *
+ */
+int sys_get_stats(int pid, struct stats *st)
+{  
+	// Check if the "pid" received is valid
+	if(pid < 0) { return -22; /*EINVAL*/ }
+
+	// Check if "*st" is a valid user address pointer.
+	if(! access_ok(VERIFY_WRITE, st, sizeof(struct stats))) { return -14; /*EFAULT*/ }
+	
+	// Find the specified task using its PID
+	for(int i = 0; i < NR_TASKS; i++)
+ 	{
+ 		if(task[i].task.PID == pid)
+		{
+			// Save the current remaining allowed quantum to the PCB of the process
+			task[i].task.p_stats.remaining_ticks = remaining_allowed_quantum;
+			
+			// Copy from kernel space to user space the "p_stats" struct and check for errors
+			if (copy_to_user(&(task[i].task.p_stats), st, sizeof(struct stats)) == -1 ) { return -11; /*EAGAIN*/ }
+			
+			// Success
+			return 0; 
+		}
+ 	}
+	
+	// If the task with the specified PID does not exist throw an error
+	return -3; /*ESRCH*/
 }
 
