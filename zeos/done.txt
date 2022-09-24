@@ -1,0 +1,20 @@
++ thread_struct
++ thread_union
++ thread_process
++ freethredqueue
+
+* task_struct
+- task_union
+* protected_task
+* task*
+
++ list_head_to_thread_struct
++ init_freethreadqueue
+
++ remaining_thread_quantum
++ get/set_thread_quantum
+* idle
+* task1
+
+* sys_fork
++ sys_pthread_create
